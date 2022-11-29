@@ -1,6 +1,7 @@
 package com.hfad.weather
 
 import android.telecom.Call
+import retrofit2.http.*
 
 interface ForecaApi {
 
