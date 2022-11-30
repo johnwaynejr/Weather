@@ -2,6 +2,7 @@ package com.hfad.weather
 
 import android.app.Activity
 import android.os.Bundle
+import android.view.View
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
@@ -37,8 +38,23 @@ class WeatherActivity : Activity() {
     private lateinit var placeholderMessage: TextView
     private lateinit var locationsList: RecyclerView
 
+    private fun showMessage(text: String, additionalMessage: String) {
+        if (text.isNotEmpty()) {
+            placeholderMessage.visibility = View.VISIBLE
+            locations.clear()
+            adapter.notifyDataSetChanged()
+            placeholderMessage.text = text
+            if (additionalMessage.isNotEmpty()) {
+                Toast.makeText(applicationContext, additionalMessage, Toast.LENGTH_LONG)
+                    .show()
+            }
+        } else {
+            placeholderMessage.visibility = View.GONE
+        }
+    }
+
     private fun authenticate() {
-        forecaService.authenticate(ForecaAuthRequest("for_mail_box", "NRIdo1MJelqS"))
+        forecaService.authenticate(ForecaAuthRequest("for_mail_box", "BZOjrFP0NczX"))
             .enqueue(object : Callback<ForecaAuthResponse> {
                 override fun onResponse(call: Call<ForecaAuthResponse>,
                                         response: Response<ForecaAuthResponse>) {
@@ -82,25 +98,6 @@ class WeatherActivity : Activity() {
 
                 override fun onFailure(call: Call<LocationsResponse>, t: Throwable) {
                     showMessage(getString(R.string.something_went_wrong), t.message.toString())
-                }
-
-                private fun showWeather(location: ForecastLocation) {
-                    forecaService.getForecast("Bearer $token", location.id)
-                        .enqueue(object : Callback<ForecastResponse> {
-                            override fun onResponse(call: Call<ForecastResponse>,
-                                                    response: Response<ForecastResponse>
-                            ) {
-                                if (response.body()?.current != null) {
-                                    val message = "${location.name} t: ${response.body()?.current?.temperature}\n(Ощущается как ${response.body()?.current?.feelsLikeTemp})"
-                                    Toast.makeText(applicationContext, message, Toast.LENGTH_LONG).show()
-                                }
-                            }
-
-                            override fun onFailure(call: Call<ForecastResponse>, t: Throwable) {
-                                Toast.makeText(applicationContext, t.message, Toast.LENGTH_LONG).show()
-                            }
-
-                        })
                 }
 
             })
