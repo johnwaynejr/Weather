@@ -101,9 +101,11 @@ class WeatherActivity : Activity() {
                 }
 
             })
+        Toast.makeText(applicationContext, "ПОИСК ВЫПОЛНИЛСЯ !!!", Toast.LENGTH_LONG).show()
     }
 
     private fun showWeather(location: ForecastLocation) {
+        Toast.makeText(applicationContext, "showWeather ВЫПОЛНИЛСЯ !!!", Toast.LENGTH_LONG).show()
         forecaService.getForecast("Bearer $token", location.id)
             .enqueue(object : Callback<ForecastResponse> {
                 override fun onResponse(call: Call<ForecastResponse>,
